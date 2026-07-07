@@ -2,27 +2,50 @@
 
 using System.Runtime.CompilerServices;
 
+// TODO add list to track results 
+// TODO add logic checking to ensure answers returned are whole numbers
+
 Random nuberGen = new Random(); 
-int number1 = nuberGen.Next(1, 100);
-int number2 = nuberGen.Next(2, 200); 
-string symbol = string.Empty;
-int answer = 0;
-string userAnswer = string.Empty;
+List <(int number1, string symbol, int number2, int answer, string userAnswer, bool userCorrect)> questionsHistory = new();
+int questionsAsked = 0;
+int correctAnswers = 0;
 
-symbol = GenerateSymbol().ToString();
-answer = checkAnswer(number1, number2, symbol[0]);
-
-Console.WriteLine($"What is {number1} {symbol} {number2}?");
-userAnswer = Console.ReadLine();
-
-if (userAnswer == answer.ToString())
+do
 {
-    Console.WriteLine("Correct!");
-}
-else
-{
-    Console.WriteLine($"Incorrect! The correct answer is {answer}.");
-}
+    int number1 = nuberGen.Next(1, 10);
+    int number2 = nuberGen.Next(2, 20);
+    string symbol = string.Empty;
+    int systemAnswer = 0;
+    bool userCorrect = false;
+    string userAnswer = string.Empty;
+
+    symbol = GenerateSymbol().ToString();
+    systemAnswer = checkAnswer(number1, number2, symbol[0]);
+
+    if (number1 % number2 == 0 && systemAnswer >= 0)
+    {
+        Console.WriteLine($"What is {number1} {symbol} {number2}?");
+        userAnswer = Console.ReadLine();
+
+        if (userAnswer == systemAnswer.ToString())
+        {
+            Console.WriteLine("Correct!");
+            userCorrect = true;
+            correctAnswers++;
+        }
+        else
+        {
+            Console.WriteLine($"Incorrect! The correct answer is {systemAnswer}.");
+        }
+        questionsAsked++;
+        questionsHistory.Add((number1, symbol, number2, systemAnswer, userAnswer, userCorrect));
+    }
+} while (questionsAsked < 5);
+
+Console.WriteLine($"\tGame Over! You answered {correctAnswers} correctly");
+
+
+
 
 string GenerateSymbol()
 {
